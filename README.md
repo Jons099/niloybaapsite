@@ -1,4 +1,4 @@
-# Luxe Attire - Premium Women's Clothing eCommerce Platform
+# Niloybaap - Premium Women's Clothing eCommerce Platform
 
 A full-featured, production-ready eCommerce platform built with modern technologies for selling premium women's clothing.
 
