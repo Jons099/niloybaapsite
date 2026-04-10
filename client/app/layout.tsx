@@ -3,6 +3,7 @@ import { Inter, Cormorant_Garamond, Montserrat } from 'next/font/google'
 import './globals.css'
 import { Toaster } from 'react-hot-toast'
 import Header from '@/components/layout/Header'
+import Footer from '@/components/layout/Footer'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const cormorant = Cormorant_Garamond({ 
@@ -31,6 +32,7 @@ export default function RootLayout({
         <Header />
         <Toaster position="top-center" />
         {children}
+        <Footer />
       </body>
     </html>
   )
