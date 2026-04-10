@@ -2,14 +2,15 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   ShoppingBagIcon, 
   UserIcon, 
   Bars3Icon, 
   XMarkIcon,
-  MagnifyingGlassIcon
+  MagnifyingGlassIcon,
+  ArrowRightOnRectangleIcon
 } from '@heroicons/react/24/outline'
 import { useCartStore } from '@/store/cartStore'
 import { useAuthStore } from '@/store/authStore'
@@ -20,10 +21,12 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [showUserMenu, setShowUserMenu] = useState(false)
   const pathname = usePathname()
+  const router = useRouter()
   
   const { items, toggleCart } = useCartStore()
-  const { user } = useAuthStore()
+  const { user, isAuthenticated, logout } = useAuthStore()
   
   const cartCount = items.reduce((total, item) => total + item.quantity, 0)
 
@@ -36,21 +39,23 @@ export default function Header() {
   }, [])
 
   const navigation = [
-  { name: 'Home', href: '/' },
-  { name: 'Shop', href: '/shop' },
-  { name: 'Collections', href: '/collections' },
-  { name: 'About', href: '/about' },
-]
-
-if (user?.role === 'admin') {
-  navigation.push({ name: 'Admin', href: '/admin' })
-}
+    { name: 'Home', href: '/' },
+    { name: 'Shop', href: '/shop' },
+    { name: 'Collections', href: '/collections' },
+    { name: 'About', href: '/about' },
+  ]
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
       window.location.href = `/shop?search=${encodeURIComponent(searchQuery)}`
     }
+  }
+
+  const handleLogout = () => {
+    logout()
+    setShowUserMenu(false)
+    router.push('/')
   }
 
   return (
@@ -72,7 +77,6 @@ if (user?.role === 'admin') {
         {/* Main Header */}
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-20">
-            {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(true)}
               className="lg:hidden p-2 hover:text-luxury-gold transition-colors"
@@ -80,7 +84,6 @@ if (user?.role === 'admin') {
               <Bars3Icon className="h-6 w-6" />
             </button>
 
-            {/* Logo */}
             <Link 
               href="/" 
               className="text-2xl md:text-3xl font-serif font-bold tracking-wide text-luxury-charcoal"
@@ -88,7 +91,6 @@ if (user?.role === 'admin') {
               LUXE ATTIRE
             </Link>
 
-            {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-8">
               {navigation.map((item) => (
                 <Link
@@ -103,9 +105,20 @@ if (user?.role === 'admin') {
                   {item.name}
                 </Link>
               ))}
+              {isAuthenticated && (user?.role === 'admin' || user?.role === 'manager') && (
+                <Link
+                  href="/admin"
+                  className={`text-sm uppercase tracking-wider transition-colors ${
+                    pathname === '/admin' 
+                      ? 'text-luxury-gold border-b-2 border-luxury-gold' 
+                      : 'text-gray-700 hover:text-luxury-gold'
+                  }`}
+                >
+                  Admin
+                </Link>
+              )}
             </nav>
 
-            {/* Right Icons */}
             <div className="flex items-center space-x-1 md:space-x-4">
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
@@ -130,16 +143,56 @@ if (user?.role === 'admin') {
                 )}
               </button>
 
-              <Link
-                href={user ? '/account' : '/login'}
-                className="p-2 text-gray-700 hover:text-luxury-gold transition-colors"
-              >
-                <UserIcon className="h-5 w-5" />
-              </Link>
+              <div className="relative">
+                {isAuthenticated ? (
+                  <>
+                    <button
+                      onClick={() => setShowUserMenu(!showUserMenu)}
+                      className="p-2 text-gray-700 hover:text-luxury-gold transition-colors flex items-center gap-1"
+                    >
+                      <UserIcon className="h-5 w-5" />
+                      <span className="hidden md:inline text-sm">{user?.name?.split(' ')[0]}</span>
+                    </button>
+                    
+                    {showUserMenu && (
+                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 border">
+                        <Link
+                          href="/account"
+                          onClick={() => setShowUserMenu(false)}
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          My Account
+                        </Link>
+                        <Link
+                          href="/orders"
+                          onClick={() => setShowUserMenu(false)}
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          My Orders
+                        </Link>
+                        <hr className="my-2" />
+                        <button
+                          onClick={handleLogout}
+                          className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                        >
+                          <ArrowRightOnRectangleIcon className="h-4 w-4" />
+                          Sign Out
+                        </button>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <Link
+                    href="/login"
+                    className="p-2 text-gray-700 hover:text-luxury-gold transition-colors"
+                  >
+                    <UserIcon className="h-5 w-5" />
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* Search Bar */}
           <AnimatePresence>
             {isSearchOpen && (
               <motion.div
@@ -154,7 +207,7 @@ if (user?.role === 'admin') {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search for products..."
-                    className="input-field"
+                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-luxury-gold"
                     autoFocus
                   />
                   <button
@@ -170,7 +223,6 @@ if (user?.role === 'admin') {
         </div>
       </header>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
@@ -202,6 +254,26 @@ if (user?.role === 'admin') {
                     {item.name}
                   </Link>
                 ))}
+                {isAuthenticated && (user?.role === 'admin' || user?.role === 'manager') && (
+                  <Link
+                    href="/admin"
+                    className="block text-lg py-2 border-b border-gray-100 text-gray-700 hover:text-luxury-gold"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Admin Dashboard
+                  </Link>
+                )}
+                {isAuthenticated && (
+                  <button
+                    onClick={() => {
+                      handleLogout()
+                      setIsMenuOpen(false)
+                    }}
+                    className="block w-full text-left text-lg py-2 border-b border-gray-100 text-red-600 hover:text-red-700"
+                  >
+                    Sign Out
+                  </button>
+                )}
               </nav>
             </div>
           </motion.div>
@@ -209,8 +281,6 @@ if (user?.role === 'admin') {
       </AnimatePresence>
       
       <CartDrawer />
-      
-      {/* Spacer for fixed header */}
       <div className="h-[88px]" />
     </>
   )

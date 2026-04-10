@@ -21,11 +21,26 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, formData)
+      const apiUrl = 'https://niloybaapsite.onrender.com/api'
+      
+      const response = await axios.post(`${apiUrl}/auth/login`, {
+        email: formData.email,
+        password: formData.password
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
       
       if (response.data.success) {
         const { token, user } = response.data
+        
+        // Store token in localStorage
+        localStorage.setItem('token', token)
+        
+        // Update auth store
         login(user, token)
+        
         toast.success('Login successful!')
         
         // Redirect based on role
@@ -34,12 +49,27 @@ export default function LoginPage() {
         } else {
           router.push('/')
         }
+      } else {
+        toast.error('Login failed')
       }
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Login failed')
+      console.error('Login error:', error)
+      
+      if (error.response?.status === 401) {
+        toast.error('Invalid email or password')
+      } else if (error.code === 'ERR_NETWORK') {
+        toast.error('Cannot connect to server')
+      } else {
+        toast.error('Login failed. Please try again.')
+      }
     } finally {
       setLoading(false)
     }
+  }
+
+  // Quick login for testing
+  const quickLogin = (email: string, password: string) => {
+    setFormData({ email, password })
   }
 
   return (
@@ -93,20 +123,26 @@ export default function LoginPage() {
           </div>
           
           <div className="mt-8 p-4 bg-luxury-cream rounded-lg">
-            <p className="text-sm font-medium mb-3 text-center">Test Credentials</p>
-            <div className="space-y-2 text-xs text-gray-600">
-              <p className="flex justify-between">
-                <span>Admin:</span>
-                <span className="font-mono">admin@luxeattire.com / Admin@123</span>
-              </p>
-              <p className="flex justify-between">
-                <span>Manager:</span>
-                <span className="font-mono">manager@luxeattire.com / Manager@123</span>
-              </p>
-              <p className="flex justify-between">
-                <span>Employee:</span>
-                <span className="font-mono">employee@luxeattire.com / Employee@123</span>
-              </p>
+            <p className="text-sm font-medium mb-3 text-center">Test Credentials (Click to fill)</p>
+            <div className="space-y-2">
+              <button 
+                onClick={() => quickLogin('admin@luxeattire.com', 'Admin@123')}
+                className="w-full text-left text-xs p-2 hover:bg-white rounded transition-colors"
+              >
+                <span className="font-medium">Admin:</span> admin@luxeattire.com / Admin@123
+              </button>
+              <button 
+                onClick={() => quickLogin('manager@luxeattire.com', 'Manager@123')}
+                className="w-full text-left text-xs p-2 hover:bg-white rounded transition-colors"
+              >
+                <span className="font-medium">Manager:</span> manager@luxeattire.com / Manager@123
+              </button>
+              <button 
+                onClick={() => quickLogin('employee@luxeattire.com', 'Employee@123')}
+                className="w-full text-left text-xs p-2 hover:bg-white rounded transition-colors"
+              >
+                <span className="font-medium">Employee:</span> employee@luxeattire.com / Employee@123
+              </button>
             </div>
           </div>
         </div>

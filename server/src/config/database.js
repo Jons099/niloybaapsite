@@ -1,7 +1,6 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
-// Neon connection configuration
 const pool = new Pool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
@@ -9,14 +8,13 @@ const pool = new Pool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   ssl: {
-    rejectUnauthorized: false, // Required for Neon
+    rejectUnauthorized: false,
   },
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 5000,
 });
 
-// Test database connection
 pool.connect((err, client, release) => {
   if (err) {
     console.error('Error connecting to Neon PostgreSQL:', err.stack);
@@ -28,7 +26,6 @@ pool.connect((err, client, release) => {
   }
 });
 
-// Query helper with automatic error handling
 const query = async (text, params) => {
   const start = Date.now();
   try {
@@ -48,7 +45,6 @@ const query = async (text, params) => {
   }
 };
 
-// Transaction helper
 const transaction = async (callback) => {
   const client = await pool.connect();
   try {
@@ -67,5 +63,5 @@ const transaction = async (callback) => {
 module.exports = {
   query,
   transaction,
-  pool
+  pool  // Make sure pool is exported
 };

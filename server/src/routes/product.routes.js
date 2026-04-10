@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/product.controller');
 const { authenticate, authorize } = require('../middleware/auth.middleware');
-const upload = require('../middleware/upload.middleware');
 
 // Public routes
 router.get('/', productController.getProducts);
@@ -12,7 +11,11 @@ router.get('/:idOrSlug', productController.getProduct);
 router.post('/',
   authenticate,
   authorize(['manager', 'admin']),
-  upload.array('images', 5),
+  (req, res, next) => {
+    console.log('POST /api/products - User:', req.user?.email);
+    console.log('Request body:', req.body);
+    next();
+  },
   productController.createProduct
 );
 
