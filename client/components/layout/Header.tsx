@@ -36,11 +36,15 @@ export default function Header() {
   }, [])
 
   const navigation = [
-    { name: 'Home', href: '/' },
-    { name: 'Shop', href: '/shop' },
-    { name: 'Collections', href: '/collections' },
-    { name: 'About', href: '/about' },
-  ]
+  { name: 'Home', href: '/' },
+  { name: 'Shop', href: '/shop' },
+  { name: 'Collections', href: '/collections' },
+  { name: 'About', href: '/about' },
+]
+
+if (user?.role === 'admin') {
+  navigation.push({ name: 'Admin', href: '/admin' })
+}
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
