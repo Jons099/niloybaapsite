@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-luxury-pearl text-luxury-charcoal antialiased;
+    font-family: var(--font-montserrat), Arial, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-cormorant), Georgia, serif;
+    @apply font-medium;
+  }
+}
+
+@layer components {
+  .container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .btn-primary {
+    @apply bg-luxury-charcoal text-white px-6 py-3 rounded-full hover:bg-luxury-gold transition-all duration-300 font-medium;
+  }
+
+  .btn-outline {
+    @apply border-2 border-luxury-charcoal text-luxury-charcoal px-6 py-3 rounded-full hover:bg-luxury-charcoal hover:text-white transition-all duration-300 font-medium;
+  }
+
+  .btn-gold {
+    @apply bg-luxury-gold text-white px-6 py-3 rounded-full hover:bg-white hover:text-luxury-charcoal transition-all duration-300 font-medium;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-luxury-gold focus:border-transparent transition-all duration-200;
+  }
+
+  .card {
+    @apply bg-white rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden;
+  }
+
+  .section-title {
+    @apply text-3xl md:text-4xl lg:text-5xl font-serif text-luxury-charcoal mb-4;
+  }
+
+  .section-subtitle {
+    @apply text-luxury-gold text-sm uppercase tracking-wider;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-luxury-gold to-luxury-burgundy bg-clip-text text-transparent;
+  }
+
+  .bg-gradient-luxury {
+    @apply bg-gradient-to-br from-luxury-charcoal via-luxury-burgundy to-luxury-charcoal;
+  }
+
+  .overlay-dark {
+    @apply absolute inset-0 bg-black/40;
+  }
+
+  .overlay-gradient {
+    @apply absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent;
+  }
+}

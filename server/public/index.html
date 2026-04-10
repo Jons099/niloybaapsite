@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxe Attire API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            font-size: 2.5em;
+            color: #2C2C2C;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .status {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+        .endpoint-section {
+            margin-top: 30px;
+        }
+        .endpoint-section h2 {
+            color: #2C2C2C;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 5px;
+        }
+        .endpoint {
+            background: #f7f7f7;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+        }
+        .method {
+            font-weight: bold;
+            margin-right: 15px;
+            min-width: 60px;
+            color: #667eea;
+        }
+        .method.post { color: #10b981; }
+        .method.put { color: #f59e0b; }
+        .method.delete { color: #ef4444; }
+        .path {
+            font-family: 'Courier New', monospace;
+            color: #2C2C2C;
+        }
+        .test-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: auto;
+            font-size: 0.9em;
+        }
+        .test-button:hover {
+            background: #5a67d8;
+        }
+        #testResult {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f7f7f7;
+            border-radius: 8px;
+            display: none;
+        }
+        #testResult pre {
+            margin-top: 10px;
+            background: #2C2C2C;
+            color: #10b981;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <span class="status">🟢 API Online</span>
+        <h1>Luxe Attire API</h1>
+        <p class="subtitle">Premium Women's Clothing eCommerce Platform</p>
+        
+        <div style="margin: 20px 0;">
+            <button onclick="testHealth()" style="background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-right: 10px;">
+                Test Health Endpoint
+            </button>
+            <button onclick="testProducts()" style="background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                Test Products API
+            </button>
+        </div>
+
+        <div id="testResult">
+            <strong>Response:</strong>
+            <pre id="responseData"></pre>
+        </div>
+
+        <div class="endpoint-section">
+            <h2>Public Endpoints</h2>
+            <div class="endpoint">
+                <span class="method">GET</span>
+                <span class="path">/api/health</span>
+                <button class="test-button" onclick="testEndpoint('/api/health')">Test</button>
+            </div>
+            <div class="endpoint">
+                <span class="method">GET</span>
+                <span class="path">/api/products</span>
+                <button class="test-button" onclick="testEndpoint('/api/products')">Test</button>
+            </div>
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="path">/api/auth/register</span>
+            </div>
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="path">/api/auth/login</span>
+            </div>
+        </div>
+
+        <div class="endpoint-section">
+            <h2>Protected Endpoints (Require Authentication)</h2>
+            <div class="endpoint">
+                <span class="method">GET</span>
+                <span class="path">/api/auth/profile</span>
+            </div>
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="path">/api/orders</span>
+            </div>
+            <div class="endpoint">
+                <span class="method">GET</span>
+                <span class="path">/api/orders/my-orders</span>
+            </div>
+        </div>
+
+        <div class="endpoint-section">
+            <h2>Admin Endpoints</h2>
+            <div class="endpoint">
+                <span class="method">GET</span>
+                <span class="path">/api/analytics/dashboard</span>
+            </div>
+            <div class="endpoint">
+                <span class="method">GET</span>
+                <span class="path">/api/users</span>
+            </div>
+        </div>
+
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+            <p style="color: #666;">
+                <strong>Test Credentials:</strong><br>
+                Admin: admin@luxeattire.com / Admin@123<br>
+                Manager: manager@luxeattire.com / Manager@123<br>
+                Employee: employee@luxeattire.com / Employee@123
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000';
+
+        async function testEndpoint(endpoint) {
+            try {
+                const response = await fetch(`${API_URL}${endpoint}`);
+                const data = await response.json();
+                displayResult(data);
+            } catch (error) {
+                displayResult({ error: error.message });
+            }
+        }
+
+        async function testHealth() {
+            await testEndpoint('/api/health');
+        }
+
+        async function testProducts() {
+            await testEndpoint('/api/products');
+        }
+
+        function displayResult(data) {
+            const resultDiv = document.getElementById('testResult');
+            const responsePre = document.getElementById('responseData');
+            
+            responsePre.textContent = JSON.stringify(data, null, 2);
+            resultDiv.style.display = 'block';
+        }
+
+        // Auto-test health on load
+        window.onload = () => {
+            testHealth();
+        };
+    </script>
+</body>
+</html>
